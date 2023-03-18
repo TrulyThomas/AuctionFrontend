@@ -5,18 +5,27 @@ import { useQuery, gql } from '@apollo/client'
 function Landing() {
   const { id } = useParams()
   const GET_ITEM_BY_ID = gql`
-  query GetItemById($id : number!) {
-    name
-  }
-`
+    query GetSingleItem($id: Int!) {
+      getItem(id: $id) {
+        name
+        text
+      }
+    }
+  `
   const { loading, error, data } = useQuery(GET_ITEM_BY_ID, {
-    variables: {id}
+    skip: !!!id,
+    variables: { id: parseInt(id ?? '0') }
   })
-  
+
   if (loading) return <p>Loading...</p>
-  if (error) return <p>{id}</p>
+  if (error) return <p>Something went wrong</p>
+  if (data.getItem == null) return <p>No such item</p>
   console.log(data)
-  return <div className="App">{data.name}</div>
+  return (
+    <div className="App">
+      {data.getItem.name} {data.getItem.text}
+    </div>
+  )
 }
 
 export default Landing
