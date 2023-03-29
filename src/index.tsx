@@ -8,7 +8,9 @@ import NavBar from './Components/NavBar/NavBar'
 import Landing from './Pages/Landing'
 import Items from './Pages/Items'
 import Item from './Pages/Item'
+import NewItem from './Pages/NewItem'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { AuthProvider } from './Components/AuthProvider'
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql',
@@ -41,13 +43,23 @@ const routes = [
         <Item />
       </NavBar>
     )
+  },
+  {
+    path: '/item/new',
+    element: (
+      <NavBar>
+        <NewItem />
+      </NavBar>
+    )
   }
 ]
 
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
+    <AuthProvider>
       <RouterProvider router={createBrowserRouter(routes)} />
+    </AuthProvider>
     </ApolloProvider>
   </React.StrictMode>
 )

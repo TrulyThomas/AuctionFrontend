@@ -24,9 +24,13 @@ const NavBar: FC<INavBarProps> = (props) => {
     { displayName: 'My Fav Item', href: '/item/1' }
   ]
 
-  const renderNavItem = (navItem: NavItem) => {
+  const renderNavItem = (navItem: NavItem, i: number) => {
     return (
-      <Button sx={{ color: 'inherit' }} href={navItem.href}>
+      <Button
+        key={'navbar' + navItem.displayName + i}
+        sx={{ color: 'inherit' }}
+        href={navItem.href}
+      >
         {navItem.displayName}
       </Button>
     )
@@ -36,7 +40,11 @@ const NavBar: FC<INavBarProps> = (props) => {
     <>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar position="static" component="nav">
+        <AppBar
+          position="static"
+          component="nav"
+          sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        >
           <Toolbar>
             <IconButton
               size="large"
@@ -44,13 +52,13 @@ const NavBar: FC<INavBarProps> = (props) => {
               color="inherit"
               aria-label="menu"
               sx={{ mr: 2 }}
-              href='/'
+              href="/"
             >
               <HomeIcon />
             </IconButton>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              {navItems.map((navItem) => {
-                return renderNavItem(navItem)
+              {navItems.map((navItem, i) => {
+                return renderNavItem(navItem, i)
               })}
             </Box>
           </Toolbar>

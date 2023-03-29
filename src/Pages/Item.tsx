@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom'
 import React from 'react'
 import { useQuery, gql } from '@apollo/client'
+import { Box, Container, Typography } from '@mui/material'
+import { SideDrawer } from '../Components/Drawer'
 
 function Landing() {
   const { id } = useParams()
@@ -20,10 +22,15 @@ function Landing() {
   if (loading) return <p>Loading...</p>
   if (error) return <p>Something went wrong</p>
   if (data.getItem == null) return <p>No such item</p>
-  console.log(data)
+
   return (
     <div className="App">
-      {data.getItem.name} {data.getItem.text}
+      <Container maxWidth="sm">
+        <SideDrawer></SideDrawer>
+        <Typography variant="h2" gutterBottom>
+          {data.getItem.name} {data.getItem.text}
+        </Typography>
+      </Container>
     </div>
   )
 }
