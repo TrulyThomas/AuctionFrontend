@@ -14,6 +14,7 @@ import { Item, ItemInput } from '../Types/Types'
 import { useNavigate } from 'react-router-dom'
 import { PhotoCamera } from '@mui/icons-material'
 import { Console } from 'console'
+import Images from './Images'
 
 function NewItem() {
    const [newItem, setNewItem] = useState<ItemInput>()
@@ -179,11 +180,8 @@ function NewItem() {
                      >
                         Create
                      </Button>
+                     <Images images={newImages}></Images>
                   </Stack>
-
-                  {newImages?.map((image) => {
-                     return <img src={'data: image/png;' + image} />
-                  })}
                </Box>
             </Box>
          </Container>
