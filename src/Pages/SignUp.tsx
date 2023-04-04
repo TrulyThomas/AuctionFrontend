@@ -9,7 +9,7 @@ import {
 import useAuth from '../Context/AuthenticationProvider'
 import { useNavigate } from 'react-router-dom'
 
-export function Login() {
+export function SignUp() {
    const { login } = useAuth()
    const navigate = useNavigate()
    return (
@@ -25,8 +25,15 @@ export function Login() {
             <Box sx={{ padding: '1rem' }}>
                <Stack spacing={3}>
                   <Typography variant="h5" gutterBottom>
-                     Login
+                     Sign Up
                   </Typography>
+                  <TextField
+                     required
+                     fullWidth
+                     id="text"
+                     label="Email"
+                     variant="outlined"
+                  />
                   <Stack direction="row" spacing={2}>
                      <TextField
                         required
@@ -41,9 +48,10 @@ export function Login() {
                         id="outlined-password-input"
                         label="Password"
                         type="password"
-                        autoComplete="current-password"
+                        autoComplete="new-password"
                      />
                   </Stack>
+
                   <Stack
                      sx={{
                         alignItems: 'center',
@@ -55,19 +63,18 @@ export function Login() {
                      <Button
                         variant="contained"
                         onClick={() => {
-                           login('hey', '123').then(() => navigate(-2))
+                           login('hey', '123').then(() => navigate('/'))
                         }}
                      >
-                        Login
+                        Sign Up
                      </Button>
                      <Button
-                        color="primary"
                         variant="text"
                         onClick={() => {
-                           navigate('/CreateAccount')
+                           navigate('/Login')
                         }}
                      >
-                        Sign Me Up for an Account
+                        I already have an account
                      </Button>
                   </Stack>
                </Stack>

@@ -1,5 +1,6 @@
 import {
    Box,
+   Stack,
    CssBaseline,
    AppBar,
    Toolbar,
@@ -9,12 +10,18 @@ import {
    Link,
    ThemeProvider,
    useMediaQuery,
-   createTheme
+   createTheme,
+   useTheme,
+   Divider
 } from '@mui/material'
 import React, { useState, FC } from 'react'
 import HomeIcon from '@mui/icons-material/Home'
 import Brightness4Icon from '@mui/icons-material/Brightness4'
 import Brightness7Icon from '@mui/icons-material/Brightness7'
+import usePalette from '../../Context/ModeHook'
+import useAuth from '../../Context/AuthenticationProvider'
+import { Login, Logout } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
 
 interface INavBarProps {
    children: React.ReactElement
@@ -24,23 +31,18 @@ interface NavItem {
    href: string
 }
 const NavBar: FC<INavBarProps> = (props) => {
-   const navItems: NavItem[] = [
-      { displayName: 'Items', href: '/items' },
-      { displayName: 'My Fav Item', href: '/item/1' },
-      { displayName: 'New Item', href: '/item/new' }
-   ]
-   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
-   const [dark, setDark] = useState<boolean>(prefersDarkMode)
-
-   const theme = React.useMemo(
-      () =>
-         createTheme({
-            palette: {
-               mode: dark ? 'dark' : 'light'
-            }
-         }),
-      [dark]
-   )
+   const theme = useTheme()
+   const { logout } = useAuth()
+   const navigate = useNavigate()
+   const { flipPaletteMode } = usePalette()
+   const { user } = useAuth()
+   const navItems: NavItem[] = user
+      ? [
+           { displayName: 'Items', href: '/items' },
+           { displayName: 'My Fav Item', href: '/item/1' },
+           { displayName: 'New Item', href: '/item/new' }
+        ]
+      : []
 
    const renderNavItem = (navItem: NavItem, i: number) => {
       return (
@@ -56,44 +58,68 @@ const NavBar: FC<INavBarProps> = (props) => {
 
    return (
       <>
-         <ThemeProvider theme={theme}>
-            <Box sx={{ display: 'flex' }}>
-               <CssBaseline />
-               <AppBar
-                  position="static"
-                  component="nav"
-                  sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-               >
-                  <Toolbar>
-                     <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        href="/"
-                     >
-                        <HomeIcon />
-                     </IconButton>
-                     <IconButton onClick={() => setDark(!dark)}>
-                        {theme.palette.mode === 'dark' ? (
-                           <Brightness7Icon />
-                        ) : (
-                           <Brightness4Icon />
-                        )}
-                     </IconButton>
+         <Box sx={{ display: 'flex' }}>
+            <AppBar
+               position="static"
+               component="nav"
+               sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            >
+               <Toolbar>
+                  <IconButton
+                     size="large"
+                     edge="start"
+                     color="inherit"
+                     aria-label="menu"
+                     sx={{ mr: 2 }}
+                     href="/"
+                  >
+                     <HomeIcon />
+                  </IconButton>
+                  <IconButton onClick={() => flipPaletteMode()}>
+                     {theme.palette.mode === 'dark' ? (
+                        <Brightness7Icon />
+                     ) : (
+                        <Brightness4Icon />
+                     )}
+                  </IconButton>
+                  <Stack
+                     direction={'row'}
+                     justifyContent="space-between"
+                     spacing={2}
+                     sx={{ width: '100%' }}
+                  >
                      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                         {navItems.map((navItem, i) => {
                            return renderNavItem(navItem, i)
                         })}
                      </Box>
-                  </Toolbar>
-               </AppBar>
-            </Box>
-            <Box component="main" sx={{ p: 3 }}>
-               {props.children}
-            </Box>
-         </ThemeProvider>
+                     {user && (
+                        <Button
+                           color="inherit"
+                           variant="text"
+                           endIcon={<Logout />}
+                           onClick={() => logout()}
+                        >
+                           Logout
+                        </Button>
+                     )}
+                     {!user && (
+                        <Button
+                           color="inherit"
+                           variant="text"
+                           endIcon={<Login />}
+                           onClick={() => navigate('/Login')}
+                        >
+                           Login
+                        </Button>
+                     )}
+                  </Stack>
+               </Toolbar>
+            </AppBar>
+         </Box>
+         <Box component="main" sx={{ p: 3 }}>
+            {props.children}
+         </Box>
       </>
    )
 }
