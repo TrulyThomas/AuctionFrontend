@@ -7,11 +7,18 @@ import {
    Typography
 } from '@mui/material'
 import useAuth from '../Context/AuthenticationProvider'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import React, { FC, useState, useEffect } from 'react'
 
-export function Login() {
+export const Login = () => {
+   const [prevURL, setPrevURL] = useState<string>('/')
    const { login } = useAuth()
    const navigate = useNavigate()
+   const location = useLocation()
+   useEffect(() => {
+      setPrevURL(location.search.slice(1))
+      console.log(location.search.slice(1))
+   }, [])
    return (
       <Container
          sx={{
@@ -55,7 +62,7 @@ export function Login() {
                      <Button
                         variant="contained"
                         onClick={() => {
-                           login('hey', '123').then(() => navigate(-2))
+                           login('hey', '123').then(() => navigate(prevURL))
                         }}
                      >
                         Login

@@ -9,12 +9,9 @@ interface IAuthRouteProps {
 const AuthenticatedRoute: FC<IAuthRouteProps> = (props) => {
    const navigate = useNavigate()
    const { user } = useAuth()
+   const location = useLocation()
    useEffect(() => {
-      // We have a problem of rendering twice with this navigation
-      // We actually navigate twice, therefore the go back option doesn't work
-      // Maybe we should have a development flag in some .json file
-      // So we can convert to dev hardcoded values instead of live?
-      if (!user) navigate('/Login')
+      if (!user) navigate('/Login?' + location.pathname)
    }, [user])
 
    return (
