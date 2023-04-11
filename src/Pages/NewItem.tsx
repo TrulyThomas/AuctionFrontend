@@ -10,10 +10,11 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import { Item, ItemInput } from '../Types/Types'
 import { useNavigate } from 'react-router-dom'
 import { PhotoCamera } from '@mui/icons-material'
 import { Console } from 'console'
+import { ItemInput } from '../Types/graphql'
+import AuctionStack from '../Components/AuctionStack'
 
 function NewItem() {
    const [newItem, setNewItem] = useState<ItemInput>()
@@ -184,6 +185,27 @@ function NewItem() {
                   {newImages?.map((image) => {
                      return <img src={'data: image/png;' + image} />
                   })}
+                  <AuctionStack itemsPerRow={4}>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                     <div>Hello World</div>
+                  </AuctionStack>
                </Box>
             </Box>
          </Container>
