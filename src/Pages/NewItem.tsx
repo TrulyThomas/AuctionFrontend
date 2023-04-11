@@ -185,27 +185,6 @@ function NewItem() {
                   {newImages?.map((image) => {
                      return <img src={'data: image/png;' + image} />
                   })}
-                  <AuctionStack itemsPerRow={4}>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                     <div>Hello World</div>
-                  </AuctionStack>
                </Box>
             </Box>
          </Container>
