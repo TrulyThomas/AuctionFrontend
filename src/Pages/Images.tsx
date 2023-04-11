@@ -16,7 +16,7 @@ export default function Images(props: { images: string[] | undefined }) {
                         aspectRatio: '1/1',
                         width: '100%'
                      }}
-                     src={props.images[currentImage]}
+                     src={'http://localhost:4000/image/1'}
                   />
                </Box>
             </Grid>
@@ -38,12 +38,23 @@ export default function Images(props: { images: string[] | undefined }) {
                   if (i == currentImage) return <></>
 
                   return (
-                     <Box overflow={'hidden'} position={'relative'}>
+                     <Box
+                        marginLeft={1}
+                        marginBottom={1}
+                        key={'boxImage' + i}
+                        overflow={'hidden'}
+                        position={'relative'}
+                        width={'22%'}
+                        style={{
+                           aspectRatio: '1/1'
+                        }}
+                     >
                         <img
+                           key={'imgImage' + i}
                            style={{
                               aspectRatio: '1/1',
                               overflow: 'hidden',
-                              width: '110px'
+                              width: '100%'
                            }}
                            src={image}
                         />

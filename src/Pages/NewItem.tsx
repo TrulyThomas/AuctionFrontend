@@ -38,7 +38,7 @@ function NewItem() {
 
    function handelSubmit() {
       if (newItem?.name == null || newItem?.name == '') return
-
+      console.log(newItem)
       creatItem({ variables: { item: newItem } })
    }
 
@@ -132,7 +132,7 @@ function NewItem() {
                               hidden
                               multiple
                               onChange={(e) => {
-                                 let temtImages = [...(newImages ?? [])]
+                                 let temtImages = [...(newItem?.images ?? [])]
 
                                  for (
                                     var i = 0;
@@ -152,17 +152,19 @@ function NewItem() {
                                     }
                                     fileReader.onload = () => {
                                        if (!fileReader.result) return
-                                       console.log(fileReader.result.toString())
                                        temtImages.push(
                                           fileReader.result.toString()
                                        )
                                     }
-                                    setNewImages(temtImages)
-                                    // let partialItem = { images: e.target.value } as ItemInput
-                                    // setNewItem({
-                                    //   ...newItem,
-                                    //   ...partialItem
-                                    // } as ItemInput)
+
+                                    let partialItem = {
+                                       images: temtImages
+                                    } as ItemInput
+
+                                    setNewItem({
+                                       ...newItem,
+                                       ...partialItem
+                                    } as ItemInput)
                                  }
                               }}
                               accept="image/*"
@@ -180,7 +182,10 @@ function NewItem() {
                      >
                         Create
                      </Button>
-                     <Images images={newImages}></Images>
+                     <img src="http://localhost:4000/image/1"></img>
+                     <Images
+                        images={(newItem?.images as string[]) ?? undefined}
+                     ></Images>
                   </Stack>
                </Box>
             </Box>
