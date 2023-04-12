@@ -9,13 +9,14 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ItemInput } from '../Types/Types'
+import Images from './Images'
+import { ImageInput, Item, ItemInput } from '../Types/graphql'
 
 function EditItem() {
-   const [opdateItem, setOpdateItem] = useState<ItemInput>()
+   const [opdateItem, setOpdateItem] = useState<Item>()
    const { id } = useParams()
    const GET_ITEM_BY_ID = gql`
-      query GetSingleItem($id: Int!) {
+      query GetItemForEdit($id: Int!) {
          getItem(id: $id) {
             name
             text
@@ -23,15 +24,15 @@ function EditItem() {
             initialPrice
             quantity
             images {
-               id
+               base64data
             }
          }
       }
    `
    const CREAT_ITEM = gql`
-      mutation newItem($item: ItemInput!) {
+      mutation editItem($item: ItemInput!) {
          newItem(item: $item) {
-            name
+            id
          }
       }
    `
@@ -45,19 +46,37 @@ function EditItem() {
    })
 
    const [
-      creatItem,
+      editItem,
       { data: updateItemData, loading: loadingItemData, error: errorItemData }
    ] = useMutation(CREAT_ITEM)
    useEffect(() => {
       setOpdateItem(getItemData?.getItem)
-
-      console.log(getItemData)
    }, [getItemData])
 
    function handelSubmit() {
       if (opdateItem?.name == null || opdateItem?.name == '') return
+      console.log(opdateItem)
 
-      creatItem({ variables: { item: opdateItem } })
+      const newItem: ItemInput = {
+         name: opdateItem.name,
+         id: opdateItem.id,
+         images:
+            opdateItem.images?.map((i) => {
+               return {
+                  order: i?.order,
+                  base64data: i?.base64data!,
+                  id: i?.id,
+                  url: i?.url
+               }
+            }) ?? [],
+         initialPrice: opdateItem.initialPrice,
+         quantity: opdateItem.quantity,
+         text: opdateItem.text
+      }
+
+      console.log(newItem)
+
+      editItem({ variables: { item: newItem } })
    }
 
    return (
@@ -77,11 +96,11 @@ function EditItem() {
                         onChange={(e) => {
                            let partialItem = {
                               name: e.target.value
-                           } as ItemInput
+                           } as Item
                            setOpdateItem({
                               ...opdateItem,
                               ...partialItem
-                           } as ItemInput)
+                           } as Item)
                         }}
                         value={opdateItem?.name ?? ''}
                         InputLabelProps={{ shrink: true }}
@@ -95,11 +114,11 @@ function EditItem() {
                            onChange={(e) => {
                               let partialItem = {
                                  initialPrice: parseInt(e.target.value)
-                              } as ItemInput
+                              } as Item
                               setOpdateItem({
                                  ...opdateItem,
                                  ...partialItem
-                              } as ItemInput)
+                              } as Item)
                            }}
                            value={opdateItem?.initialPrice ?? ''}
                            InputLabelProps={{ shrink: true }}
@@ -113,11 +132,11 @@ function EditItem() {
                            onChange={(e) => {
                               let partialItem = {
                                  quantity: parseInt(e.target.value)
-                              } as ItemInput
+                              } as Item
                               setOpdateItem({
                                  ...opdateItem,
                                  ...partialItem
-                              } as ItemInput)
+                              } as Item)
                            }}
                            value={opdateItem?.quantity ?? ''}
                            InputLabelProps={{ shrink: true }}
@@ -127,16 +146,24 @@ function EditItem() {
                            type="number"
                         />
                      </Stack>
+
+                     <Images
+                        images={
+                           (opdateItem?.images?.map(
+                              (i) => i?.base64data
+                           ) as string[]) ?? undefined
+                        }
+                     ></Images>
                      <TextField
                         fullWidth
                         onChange={(e) => {
                            let partialItem = {
                               text: e.target.value
-                           } as ItemInput
+                           } as Item
                            setOpdateItem({
                               ...opdateItem,
                               ...partialItem
-                           } as ItemInput)
+                           } as Item)
                         }}
                         value={opdateItem?.text ?? ''}
                         InputLabelProps={{ shrink: true }}

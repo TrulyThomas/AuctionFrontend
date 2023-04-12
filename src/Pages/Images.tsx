@@ -16,7 +16,7 @@ export default function Images(props: { images: string[] | undefined }) {
                         aspectRatio: '1/1',
                         width: '100%'
                      }}
-                     src={'http://localhost:4000/image/1'}
+                     src={props.images[currentImage]}
                   />
                </Box>
             </Grid>

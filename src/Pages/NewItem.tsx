@@ -10,11 +10,11 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import { Item, ItemInput } from '../Types/Types'
 import { useNavigate } from 'react-router-dom'
 import { PhotoCamera } from '@mui/icons-material'
 import { Console } from 'console'
 import Images from './Images'
+import { ItemInput } from '../Types/graphql'
 
 function NewItem() {
    const [newItem, setNewItem] = useState<ItemInput>()
@@ -23,14 +23,14 @@ function NewItem() {
    const navigate = useNavigate()
 
    const CREAT_ITEM = gql`
-      mutation newItem($item: ItemInput!) {
+      mutation createItem($item: ItemInput!) {
          newItem(item: $item) {
             id
          }
       }
    `
 
-   const [creatItem, { data, loading, error }] = useMutation(CREAT_ITEM)
+   const [createItem, { data, loading, error }] = useMutation(CREAT_ITEM)
    useEffect(() => {
       if (!data) return
       navigate('/item/edit/' + data.newItem.id)
@@ -39,7 +39,8 @@ function NewItem() {
    function handelSubmit() {
       if (newItem?.name == null || newItem?.name == '') return
       console.log(newItem)
-      creatItem({ variables: { item: newItem } })
+
+      createItem({ variables: { item: newItem } })
    }
 
    return (
@@ -152,9 +153,10 @@ function NewItem() {
                                     }
                                     fileReader.onload = () => {
                                        if (!fileReader.result) return
-                                       temtImages.push(
-                                          fileReader.result.toString()
-                                       )
+                                       temtImages.push({
+                                          base64data:
+                                             fileReader.result.toString()
+                                       })
                                     }
 
                                     let partialItem = {
@@ -182,9 +184,12 @@ function NewItem() {
                      >
                         Create
                      </Button>
-                     <img src="http://localhost:4000/image/1"></img>
                      <Images
-                        images={(newItem?.images as string[]) ?? undefined}
+                        images={
+                           (newItem?.images?.map(
+                              (i) => i?.base64data
+                           ) as string[]) ?? undefined
+                        }
                      ></Images>
                   </Stack>
                </Box>
