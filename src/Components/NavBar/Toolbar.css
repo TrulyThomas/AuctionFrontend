@@ -1,0 +1,8 @@
+
+.resizeAnimation {
+    transition: 250ms;
+}
+
+.resize {
+    min-height: 48px !important
+}

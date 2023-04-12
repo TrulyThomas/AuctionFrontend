@@ -7,7 +7,7 @@ import { SideDrawer } from '../Components/Drawer'
 function Landing() {
    const { id } = useParams()
    const GET_ITEM_BY_ID = gql`
-      query GetSingleIteSm($id: Int!) {
+      query GetSingleItemShow($id: Int!) {
          getItem(id: $id) {
             name
             text
@@ -30,6 +30,7 @@ function Landing() {
             <Typography variant="h2" gutterBottom>
                {data.getItem.name} {data.getItem.text}
             </Typography>
+            <Box sx={{ height: '200vh' }}></Box>
          </Container>
       </div>
    )
