@@ -15,6 +15,7 @@ import { PhotoCamera } from '@mui/icons-material'
 import { Console } from 'console'
 import Images from './Images'
 import { ItemInput } from '../Types/graphql'
+import AuctionStack from '../Components/AuctionStack'
 
 function NewItem() {
    const [newItem, setNewItem] = useState<ItemInput>()

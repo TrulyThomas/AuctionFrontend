@@ -1,17 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './Pages/Landing'
 import reportWebVitals from './reportWebVitals'
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
-import NavBar from './Components/NavBar/NavBar'
+import NavbarPageWrapper from './Components/NavBar/NavbarPageWrapper'
 import Landing from './Pages/Landing'
 import Items from './Pages/Items'
 import Item from './Pages/Item'
 import NewItem from './Pages/NewItem'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { AuthProvider } from './Components/AuthProvider'
 import EditItem from './Pages/EditItem'
+import { AuthenticationProvider } from './Context/AuthenticationProvider'
+import { Login } from './Pages/Login'
+import AuthenticatedRoute from './Components/AuthenticatedRoute'
+import { AuctionThemeProvider } from './Context/ModeHook'
+import { SignUp } from './Pages/SignUp'
 
 const client = new ApolloClient({
    uri: 'http://localhost:4000/graphql',
@@ -24,51 +27,69 @@ const routes = [
    {
       path: '/',
       element: (
-         <NavBar>
+         <NavbarPageWrapper>
             <Landing />
-         </NavBar>
+         </NavbarPageWrapper>
       )
    },
    {
       path: '/items',
       element: (
-         <NavBar>
-            <Items />
-         </NavBar>
+         <AuthenticatedRoute>
+            <NavbarPageWrapper>
+               <Items />
+            </NavbarPageWrapper>
+         </AuthenticatedRoute>
       )
    },
    {
       path: '/item/:id',
       element: (
-         <NavBar>
-            <Item />
-         </NavBar>
+         <AuthenticatedRoute>
+            <NavbarPageWrapper>
+               <Item />
+            </NavbarPageWrapper>
+         </AuthenticatedRoute>
       )
    },
    {
       path: '/item/new',
       element: (
-         <NavBar>
-            <NewItem />
-         </NavBar>
+         <AuthenticatedRoute>
+            <NavbarPageWrapper>
+               <NewItem />
+            </NavbarPageWrapper>
+         </AuthenticatedRoute>
       )
    },
    {
       path: '/item/edit/:id',
       element: (
-         <NavBar>
-            <EditItem />
-         </NavBar>
+         <AuthenticatedRoute>
+            <NavbarPageWrapper>
+               <EditItem />
+            </NavbarPageWrapper>
+         </AuthenticatedRoute>
       )
+   },
+   {
+      path: '/Login',
+      element: <Login />
+   },
+   {
+      path: '/CreateAccount',
+      element: <SignUp />
    }
 ]
 
 root.render(
    <React.StrictMode>
       <ApolloProvider client={client}>
-         <AuthProvider>
-            <RouterProvider router={createBrowserRouter(routes)} />
-         </AuthProvider>
+         <AuthenticationProvider>
+            <AuctionThemeProvider>
+               <RouterProvider router={createBrowserRouter(routes)} />
+            </AuctionThemeProvider>
+         </AuthenticationProvider>
       </ApolloProvider>
    </React.StrictMode>
 )

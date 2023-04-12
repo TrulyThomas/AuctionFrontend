@@ -7,18 +7,11 @@ import {
    Typography
 } from '@mui/material'
 import useAuth from '../Context/AuthenticationProvider'
-import { useLocation, useNavigate } from 'react-router-dom'
-import React, { FC, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-export const Login = () => {
-   const [prevURL, setPrevURL] = useState<string>('/')
+export function SignUp() {
    const { login } = useAuth()
    const navigate = useNavigate()
-   const location = useLocation()
-   useEffect(() => {
-      setPrevURL(location.search.slice(1))
-      console.log(location.search.slice(1))
-   }, [])
    return (
       <Container
          sx={{
@@ -32,8 +25,15 @@ export const Login = () => {
             <Box sx={{ padding: '1rem' }}>
                <Stack spacing={3}>
                   <Typography variant="h5" gutterBottom>
-                     Login
+                     Sign Up
                   </Typography>
+                  <TextField
+                     required
+                     fullWidth
+                     id="text"
+                     label="Email"
+                     variant="outlined"
+                  />
                   <Stack direction="row" spacing={2}>
                      <TextField
                         required
@@ -48,9 +48,10 @@ export const Login = () => {
                         id="outlined-password-input"
                         label="Password"
                         type="password"
-                        autoComplete="current-password"
+                        autoComplete="new-password"
                      />
                   </Stack>
+
                   <Stack
                      sx={{
                         alignItems: 'center',
@@ -62,19 +63,18 @@ export const Login = () => {
                      <Button
                         variant="contained"
                         onClick={() => {
-                           login('hey', '123').then(() => navigate(prevURL))
+                           login('hey', '123').then(() => navigate('/'))
                         }}
                      >
-                        Login
+                        Sign Up
                      </Button>
                      <Button
-                        color="primary"
                         variant="text"
                         onClick={() => {
-                           navigate('/CreateAccount')
+                           navigate('/Login')
                         }}
                      >
-                        Sign Me Up for an Account
+                        I already have an account
                      </Button>
                   </Stack>
                </Stack>
