@@ -6,6 +6,7 @@
     "@apollo/client": "^3.7.10",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.13",
     "@testing-library/jest-dom": "^5.16.5",
@@ -47,5 +48,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^3.3.0",
+    "@graphql-codegen/typescript": "^3.0.3"
   }
 }

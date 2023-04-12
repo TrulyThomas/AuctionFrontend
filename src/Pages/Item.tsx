@@ -7,7 +7,7 @@ import { SideDrawer } from '../Components/Drawer'
 function Landing() {
    const { id } = useParams()
    const GET_ITEM_BY_ID = gql`
-      query GetSingleItem($id: Int!) {
+      query GetSingleItemShow($id: Int!) {
          getItem(id: $id) {
             name
             text
