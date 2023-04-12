@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import reportWebVitals from './reportWebVitals'
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
-import NavBar from './Components/NavBar/NavBar'
+import NavbarPageWrapper from './Components/NavBar/NavbarPageWrapper'
 import Landing from './Pages/Landing'
 import Items from './Pages/Items'
 import Item from './Pages/Item'
@@ -27,18 +27,18 @@ const routes = [
    {
       path: '/',
       element: (
-         <NavBar>
+         <NavbarPageWrapper>
             <Landing />
-         </NavBar>
+         </NavbarPageWrapper>
       )
    },
    {
       path: '/items',
       element: (
          <AuthenticatedRoute>
-            <NavBar>
+            <NavbarPageWrapper>
                <Items />
-            </NavBar>
+            </NavbarPageWrapper>
          </AuthenticatedRoute>
       )
    },
@@ -46,9 +46,9 @@ const routes = [
       path: '/item/:id',
       element: (
          <AuthenticatedRoute>
-            <NavBar>
+            <NavbarPageWrapper>
                <Item />
-            </NavBar>
+            </NavbarPageWrapper>
          </AuthenticatedRoute>
       )
    },
@@ -56,9 +56,9 @@ const routes = [
       path: '/item/new',
       element: (
          <AuthenticatedRoute>
-            <NavBar>
+            <NavbarPageWrapper>
                <NewItem />
-            </NavBar>
+            </NavbarPageWrapper>
          </AuthenticatedRoute>
       )
    },
@@ -66,9 +66,9 @@ const routes = [
       path: '/item/edit/:id',
       element: (
          <AuthenticatedRoute>
-            <NavBar>
+            <NavbarPageWrapper>
                <EditItem />
-            </NavBar>
+            </NavbarPageWrapper>
          </AuthenticatedRoute>
       )
    },
