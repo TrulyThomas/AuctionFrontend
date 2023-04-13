@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Images from './Images'
 import { ImageInput, Item, ItemInput } from '../Types/graphql'
+import Images from '../Components/Images'
 
 function EditItem() {
    const [opdateItem, setOpdateItem] = useState<Item>()
