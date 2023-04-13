@@ -14,9 +14,9 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n      query GetItemForEdit($id: Int!) {\n         getItem(id: $id) {\n            name\n            text\n            id\n            initialPrice\n            quantity\n            images {\n               base64data\n            }\n         }\n      }\n   ": types.GetItemForEditDocument,
-    "\n      mutation editItem($item: ItemInput!) {\n         newItem(item: $item) {\n            name\n         }\n      }\n   ": types.EditItemDocument,
-    "\n    query GetSingleItem($id: Int!) {\n      getItem(id: $id) {\n        name\n        text\n      }\n    }\n  ": types.GetSingleItemDocument,
-    "\n  query GetItems {\n    allItems {\n      name\n    }\n  }\n": types.GetItemsDocument,
+    "\n      mutation editItem($item: ItemInput!) {\n         newItem(item: $item) {\n            id\n         }\n      }\n   ": types.EditItemDocument,
+    "\n      query GetSingleItemShow($id: Int!) {\n         getItem(id: $id) {\n            name\n            text\n         }\n      }\n   ": types.GetSingleItemShowDocument,
+    "\n   query GetItems {\n      allItems {\n         name\n         text\n         images {\n            url\n         }\n      }\n   }\n": types.GetItemsDocument,
     "\n      mutation createItem($item: ItemInput!) {\n         newItem(item: $item) {\n            id\n         }\n      }\n   ": types.CreateItemDocument,
 };
 
@@ -41,15 +41,15 @@ export function graphql(source: "\n      query GetItemForEdit($id: Int!) {\n    
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n      mutation editItem($item: ItemInput!) {\n         newItem(item: $item) {\n            name\n         }\n      }\n   "): (typeof documents)["\n      mutation editItem($item: ItemInput!) {\n         newItem(item: $item) {\n            name\n         }\n      }\n   "];
+export function graphql(source: "\n      mutation editItem($item: ItemInput!) {\n         newItem(item: $item) {\n            id\n         }\n      }\n   "): (typeof documents)["\n      mutation editItem($item: ItemInput!) {\n         newItem(item: $item) {\n            id\n         }\n      }\n   "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query GetSingleItem($id: Int!) {\n      getItem(id: $id) {\n        name\n        text\n      }\n    }\n  "): (typeof documents)["\n    query GetSingleItem($id: Int!) {\n      getItem(id: $id) {\n        name\n        text\n      }\n    }\n  "];
+export function graphql(source: "\n      query GetSingleItemShow($id: Int!) {\n         getItem(id: $id) {\n            name\n            text\n         }\n      }\n   "): (typeof documents)["\n      query GetSingleItemShow($id: Int!) {\n         getItem(id: $id) {\n            name\n            text\n         }\n      }\n   "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetItems {\n    allItems {\n      name\n    }\n  }\n"): (typeof documents)["\n  query GetItems {\n    allItems {\n      name\n    }\n  }\n"];
+export function graphql(source: "\n   query GetItems {\n      allItems {\n         name\n         text\n         images {\n            url\n         }\n      }\n   }\n"): (typeof documents)["\n   query GetItems {\n      allItems {\n         name\n         text\n         images {\n            url\n         }\n      }\n   }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

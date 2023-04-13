@@ -13,7 +13,7 @@ import { useMutation, gql } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
 import { PhotoCamera } from '@mui/icons-material'
 import { Console } from 'console'
-import Images from './Images'
+import Images from '../Components/Images'
 import { ItemInput } from '../Types/graphql'
 import AuctionStack from '../Components/AuctionStack'
 
@@ -177,6 +177,13 @@ function NewItem() {
                         </Button>
                      )}
                      {loadingImage && <CircularProgress color="inherit" />}
+                     <Images
+                        images={
+                           (newItem?.images?.map(
+                              (i) => i?.base64data
+                           ) as string[]) ?? undefined
+                        }
+                     ></Images>
                      <Button
                         type="button"
                         variant="contained"
@@ -185,13 +192,6 @@ function NewItem() {
                      >
                         Create
                      </Button>
-                     <Images
-                        images={
-                           (newItem?.images?.map(
-                              (i) => i?.base64data
-                           ) as string[]) ?? undefined
-                        }
-                     ></Images>
                   </Stack>
                </Box>
             </Box>

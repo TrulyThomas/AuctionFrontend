@@ -16,14 +16,16 @@ const AuctionStack: FC<IAuctionStackProps> = (props) => {
 
    childrenArray = [
       ...childrenArray,
-      ...Array(childrenArray.length % props.itemsPerRow).map((_) => <div></div>)
+      ...Array(
+         props.itemsPerRow - (childrenArray.length % props.itemsPerRow)
+      ).map((_) => <div></div>)
    ]
 
    return (
       <>
          <Stack
             direction={'row'}
-            justifyContent="space-evenly"
+            justifyContent="space-between"
             flexWrap={'wrap'}
             gap={props.gap ?? 2}
          >

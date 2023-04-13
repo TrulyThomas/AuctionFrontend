@@ -21,7 +21,7 @@ const GET_ITEMS = graphql(/* GraphQL */ `
       allItems {
          name
          text
-         image {
+         images {
             url
          }
       }
