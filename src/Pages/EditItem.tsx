@@ -13,7 +13,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ImageInput, Image, Item, ItemInput } from '../Types/graphql'
 import Images from '../Components/Images'
 import { PhotoCamera } from '@mui/icons-material'
-import NewItem from './NewItem'
 
 function EditItem() {
    const [opdateItem, setOpdateItem] = useState<Item>()
