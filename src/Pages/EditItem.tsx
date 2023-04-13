@@ -2,20 +2,25 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import {
    Box,
    Button,
+   CircularProgress,
    Container,
    Stack,
    TextField,
    Typography
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import Images from './Images'
-import { ImageInput, Item, ItemInput } from '../Types/graphql'
+import { useNavigate, useParams } from 'react-router-dom'
+import { ImageInput, Image, Item, ItemInput } from '../Types/graphql'
 import Images from '../Components/Images'
+import { PhotoCamera } from '@mui/icons-material'
+import NewItem from './NewItem'
 
 function EditItem() {
    const [opdateItem, setOpdateItem] = useState<Item>()
    const { id } = useParams()
+   const [loadingImage, setLoadingImage] = useState<boolean>(false)
+   const navigate = useNavigate()
+
    const GET_ITEM_BY_ID = gql`
       query GetItemForEdit($id: Int!) {
          getItem(id: $id) {
@@ -26,6 +31,8 @@ function EditItem() {
             quantity
             images {
                base64data
+               order
+               id
             }
          }
       }
@@ -42,7 +49,7 @@ function EditItem() {
       error: getItemError,
       loading: getItemLoading
    } = useQuery(GET_ITEM_BY_ID, {
-      skip: !!!id,
+      skip: id === 'new',
       variables: { id: parseInt(id ?? '0') }
    })
 
@@ -54,9 +61,13 @@ function EditItem() {
       setOpdateItem(getItemData?.getItem)
    }, [getItemData])
 
+   useEffect(() => {
+      if (!updateItemData) return
+      if (id == 'new') navigate('/item/edit/' + updateItemData.newItem.id)
+   }, [updateItemData])
+
    function handelSubmit() {
       if (opdateItem?.name == null || opdateItem?.name == '') return
-      console.log(opdateItem)
 
       const newItem: ItemInput = {
          name: opdateItem.name,
@@ -74,10 +85,15 @@ function EditItem() {
          quantity: opdateItem.quantity,
          text: opdateItem.text
       }
-
-      console.log(newItem)
-
       editItem({ variables: { item: newItem } })
+   }
+
+   function deleteImages(deleteIndex: number) {
+      let newImages = [...(opdateItem?.images as Array<Image>)]
+
+      newImages.splice(deleteIndex, 1)
+
+      setOpdateItem({ ...opdateItem, images: newImages } as Item)
    }
 
    return (
@@ -91,7 +107,7 @@ function EditItem() {
                         gutterBottom
                         sx={{ alignSelf: 'center' }}
                      >
-                        Edit item
+                        {id == 'new' ? 'New Item' : 'Edit item'}
                      </Typography>
                      <TextField
                         onChange={(e) => {
@@ -147,13 +163,74 @@ function EditItem() {
                            type="number"
                         />
                      </Stack>
+                     {!loadingImage && (
+                        <Button
+                           startIcon={<PhotoCamera />}
+                           color="primary"
+                           aria-label="upload picture"
+                           component="label"
+                        >
+                           Upload Pictures
+                           <input
+                              hidden
+                              multiple
+                              onChange={(e) => {
+                                 let temtImages = [
+                                    ...(opdateItem?.images ?? [])
+                                 ]
 
+                                 for (
+                                    var i = 0;
+                                    i < (e.target.files?.length ?? 0);
+                                    i++
+                                 ) {
+                                    let fileReader = new FileReader()
+                                    let file = e.target.files?.item(i)
+                                    if (!file) continue
+
+                                    fileReader.readAsDataURL(file)
+                                    fileReader.onloadstart = () => {
+                                       setLoadingImage(true)
+                                    }
+                                    fileReader.onloadend = () => {
+                                       setLoadingImage(false)
+                                    }
+                                    fileReader.onload = () => {
+                                       if (!fileReader.result) return
+                                       temtImages.push({
+                                          base64data:
+                                             fileReader.result.toString(),
+                                          order: i,
+                                          id: 0,
+                                          url: ''
+                                       })
+                                    }
+
+                                    let partialItem = {
+                                       images: temtImages
+                                    } as Item
+
+                                    setOpdateItem({
+                                       ...opdateItem,
+                                       ...partialItem
+                                    } as Item)
+                                 }
+                              }}
+                              accept="image/*"
+                              id="image"
+                              type="file"
+                           />
+                        </Button>
+                     )}
+                     {loadingImage && <CircularProgress color="inherit" />}
                      <Images
+                        edit={true}
                         images={
                            (opdateItem?.images?.map(
                               (i) => i?.base64data
                            ) as string[]) ?? undefined
                         }
+                        deleteImages={deleteImages}
                      ></Images>
                      <TextField
                         fullWidth

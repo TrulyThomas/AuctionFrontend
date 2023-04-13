@@ -178,6 +178,7 @@ function NewItem() {
                      )}
                      {loadingImage && <CircularProgress color="inherit" />}
                      <Images
+                        edit={true}
                         images={
                            (newItem?.images?.map(
                               (i) => i?.base64data

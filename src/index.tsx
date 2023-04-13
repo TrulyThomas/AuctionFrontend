@@ -52,16 +52,7 @@ const routes = [
          </AuthenticatedRoute>
       )
    },
-   {
-      path: '/item/new',
-      element: (
-         <AuthenticatedRoute>
-            <NavbarPageWrapper>
-               <NewItem />
-            </NavbarPageWrapper>
-         </AuthenticatedRoute>
-      )
-   },
+
    {
       path: '/item/edit/:id',
       element: (

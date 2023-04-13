@@ -1,10 +1,17 @@
 import { Box, Button, Grid, Hidden, IconButton, Stack } from '@mui/material'
 import { useState } from 'react'
 import AuctionStack from './AuctionStack'
-import { ArrowBackIos, ArrowForwardIos, PhotoCamera } from '@mui/icons-material'
+import {
+   ArrowBackIos,
+   ArrowForwardIos,
+   Clear,
+   PhotoCamera
+} from '@mui/icons-material'
 
 export default function Images(props: {
    images: string[] | undefined
+   edit: boolean | undefined
+   deleteImages?: (deleteIndex: number) => void
 }) {
    const [currentImage, setCurrentImage] = useState(0)
 
@@ -37,6 +44,39 @@ export default function Images(props: {
                            onClick={() => setCurrentImage(i)}
                            src={image}
                         />
+                        {props?.edit && (
+                           <Box>
+                              <IconButton
+                                 onClick={() => props.deleteImages!(i)}
+                              >
+                                 <Clear />
+                              </IconButton>
+                           </Box>
+
+                           // <Stack
+                           //    direction={'row'}
+                           //    justifyContent="space-between"
+                           // >
+                           //    {i != 0 ? (
+                           //       <IconButton
+                           //          onClick={() => props.orderImages!(i, i - 1)}
+                           //       >
+                           //          <ArrowBackIos />
+                           //       </IconButton>
+                           //    ) : (
+                           //       <div></div>
+                           //    )}
+                           //    {i != props.images?.length! - 1 ?? false ? (
+                           //       <IconButton
+                           //          onClick={() => props.orderImages!(i, i + 1)}
+                           //       >
+                           //          <ArrowForwardIos />
+                           //       </IconButton>
+                           //    ) : (
+                           //       <div></div>
+                           //    )}
+                           // </Stack>
+                        )}
                      </>
                   )
                })}
