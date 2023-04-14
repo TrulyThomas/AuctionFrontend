@@ -7,7 +7,6 @@ import NavbarPageWrapper from './Components/NavBar/NavbarPageWrapper'
 import Landing from './Pages/Landing'
 import Items from './Pages/Items'
 import Item from './Pages/Item'
-import NewItem from './Pages/NewItem'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import EditItem from './Pages/EditItem'
 import { AuthenticationProvider } from './Context/AuthenticationProvider'
@@ -52,16 +51,7 @@ const routes = [
          </AuthenticatedRoute>
       )
    },
-   {
-      path: '/item/new',
-      element: (
-         <AuthenticatedRoute>
-            <NavbarPageWrapper>
-               <NewItem />
-            </NavbarPageWrapper>
-         </AuthenticatedRoute>
-      )
-   },
+
    {
       path: '/item/edit/:id',
       element: (

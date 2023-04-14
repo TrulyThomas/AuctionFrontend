@@ -50,7 +50,7 @@ const AuctionAppBar: FC<IAuctionAppBarProps> = (props) => {
       : [
            { displayName: 'Items', href: '/items' },
            { displayName: 'My Fav Item', href: '/item/1' },
-           { displayName: 'New Item', href: '/item/new' }
+           { displayName: 'New Item', href: '/item/edit/new' }
         ]
    useEffect(() => {
       console.log('running', props.toolbarVariant)

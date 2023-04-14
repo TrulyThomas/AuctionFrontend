@@ -2,36 +2,44 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import {
    Box,
    Button,
+   CircularProgress,
    Container,
    Stack,
    TextField,
    Typography
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { ItemInput } from '../Types/graphql'
+import { useNavigate, useParams } from 'react-router-dom'
+import { ImageInput, Image, Item, ItemInput } from '../Types/graphql'
+import Images from '../Components/Images'
+import { PhotoCamera } from '@mui/icons-material'
 
 function EditItem() {
-   const [opdateItem, setOpdateItem] = useState<ItemInput>()
+   const [opdateItem, setOpdateItem] = useState<Item>()
    const { id } = useParams()
+   const [loadingImage, setLoadingImage] = useState<boolean>(false)
+   const navigate = useNavigate()
+
    const GET_ITEM_BY_ID = gql`
-      query GetSingleItem($id: Int!) {
+      query GetItemForEdit($id: Int!) {
          getItem(id: $id) {
             name
             text
             id
             initialPrice
             quantity
-            image {
-               url
+            images {
+               base64data
+               order
+               id
             }
          }
       }
    `
    const CREAT_ITEM = gql`
-      mutation newItSSSem($item: ItemInput!) {
+      mutation editItem($item: ItemInput!) {
          newItem(item: $item) {
-            name
+            id
          }
       }
    `
@@ -40,24 +48,51 @@ function EditItem() {
       error: getItemError,
       loading: getItemLoading
    } = useQuery(GET_ITEM_BY_ID, {
-      skip: !!!id,
+      skip: id === 'new',
       variables: { id: parseInt(id ?? '0') }
    })
 
    const [
-      creatItem,
+      editItem,
       { data: updateItemData, loading: loadingItemData, error: errorItemData }
    ] = useMutation(CREAT_ITEM)
    useEffect(() => {
       setOpdateItem(getItemData?.getItem)
-
-      console.log(getItemData)
    }, [getItemData])
+
+   useEffect(() => {
+      if (!updateItemData) return
+      if (id == 'new') navigate('/item/edit/' + updateItemData.newItem.id)
+   }, [updateItemData])
 
    function handelSubmit() {
       if (opdateItem?.name == null || opdateItem?.name == '') return
 
-      creatItem({ variables: { item: opdateItem } })
+      const newItem: ItemInput = {
+         name: opdateItem.name,
+         id: opdateItem.id,
+         images:
+            opdateItem.images?.map((i) => {
+               return {
+                  order: i?.order,
+                  base64data: i?.base64data!,
+                  id: i?.id,
+                  url: i?.url
+               }
+            }) ?? [],
+         initialPrice: opdateItem.initialPrice,
+         quantity: opdateItem.quantity,
+         text: opdateItem.text
+      }
+      editItem({ variables: { item: newItem } })
+   }
+
+   function deleteImages(deleteIndex: number) {
+      let newImages = [...(opdateItem?.images as Array<Image>)]
+
+      newImages.splice(deleteIndex, 1)
+
+      setOpdateItem({ ...opdateItem, images: newImages } as Item)
    }
 
    return (
@@ -71,17 +106,17 @@ function EditItem() {
                         gutterBottom
                         sx={{ alignSelf: 'center' }}
                      >
-                        Edit item
+                        {id == 'new' ? 'New Item' : 'Edit item'}
                      </Typography>
                      <TextField
                         onChange={(e) => {
                            let partialItem = {
                               name: e.target.value
-                           } as ItemInput
+                           } as Item
                            setOpdateItem({
                               ...opdateItem,
                               ...partialItem
-                           } as ItemInput)
+                           } as Item)
                         }}
                         value={opdateItem?.name ?? ''}
                         InputLabelProps={{ shrink: true }}
@@ -95,11 +130,11 @@ function EditItem() {
                            onChange={(e) => {
                               let partialItem = {
                                  initialPrice: parseInt(e.target.value)
-                              } as ItemInput
+                              } as Item
                               setOpdateItem({
                                  ...opdateItem,
                                  ...partialItem
-                              } as ItemInput)
+                              } as Item)
                            }}
                            value={opdateItem?.initialPrice ?? ''}
                            InputLabelProps={{ shrink: true }}
@@ -113,11 +148,11 @@ function EditItem() {
                            onChange={(e) => {
                               let partialItem = {
                                  quantity: parseInt(e.target.value)
-                              } as ItemInput
+                              } as Item
                               setOpdateItem({
                                  ...opdateItem,
                                  ...partialItem
-                              } as ItemInput)
+                              } as Item)
                            }}
                            value={opdateItem?.quantity ?? ''}
                            InputLabelProps={{ shrink: true }}
@@ -127,16 +162,85 @@ function EditItem() {
                            type="number"
                         />
                      </Stack>
+                     {!loadingImage && (
+                        <Button
+                           startIcon={<PhotoCamera />}
+                           color="primary"
+                           aria-label="upload picture"
+                           component="label"
+                        >
+                           Upload Pictures
+                           <input
+                              hidden
+                              multiple
+                              onChange={(e) => {
+                                 let temtImages = [
+                                    ...(opdateItem?.images ?? [])
+                                 ]
+
+                                 for (
+                                    var i = 0;
+                                    i < (e.target.files?.length ?? 0);
+                                    i++
+                                 ) {
+                                    let fileReader = new FileReader()
+                                    let file = e.target.files?.item(i)
+                                    if (!file) continue
+
+                                    fileReader.readAsDataURL(file)
+                                    fileReader.onloadstart = () => {
+                                       setLoadingImage(true)
+                                    }
+                                    fileReader.onloadend = () => {
+                                       setLoadingImage(false)
+                                    }
+                                    fileReader.onload = () => {
+                                       if (!fileReader.result) return
+                                       temtImages.push({
+                                          base64data:
+                                             fileReader.result.toString(),
+                                          order: i,
+                                          id: 0,
+                                          url: ''
+                                       })
+                                    }
+
+                                    let partialItem = {
+                                       images: temtImages
+                                    } as Item
+
+                                    setOpdateItem({
+                                       ...opdateItem,
+                                       ...partialItem
+                                    } as Item)
+                                 }
+                              }}
+                              accept="image/*"
+                              id="image"
+                              type="file"
+                           />
+                        </Button>
+                     )}
+                     {loadingImage && <CircularProgress color="inherit" />}
+                     <Images
+                        edit={true}
+                        images={
+                           (opdateItem?.images?.map(
+                              (i) => i?.base64data
+                           ) as string[]) ?? undefined
+                        }
+                        deleteImages={deleteImages}
+                     ></Images>
                      <TextField
                         fullWidth
                         onChange={(e) => {
                            let partialItem = {
                               text: e.target.value
-                           } as ItemInput
+                           } as Item
                            setOpdateItem({
                               ...opdateItem,
                               ...partialItem
-                           } as ItemInput)
+                           } as Item)
                         }}
                         value={opdateItem?.text ?? ''}
                         InputLabelProps={{ shrink: true }}
