@@ -1,0 +1,60 @@
+.myImage{
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    width: 100%;
+    cursor: pointer;
+}
+
+.myImage:active{
+    transform: scale(1.1);
+    transition: .2s;
+}
+.myImage:hover{
+    transform: scale(1.1);
+    transition: .2s;
+}
+
+
+ 
+  @keyframes newCurrentImageUp {
+    from {transform:  translate(0);}
+    to {transform:  translate(0, -3px);}
+  }
+
+  @keyframes newCurrentImageDown {
+    from {transform:  translate(0);}
+    to {transform:  translate(0, 2px);}
+  }
+  .newCurrentImage{
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    width: 100%;
+    cursor: pointer;
+    animation-name: newCurrentImageUp;
+    animation-duration: .2s;
+  }
+
+  .newCurrentImage:hover{
+    transform: scale(1.1);
+    transition: .2s;
+}
+  @keyframes newImage {
+    from {transform:  scale(1);}
+    to {transform:  scale(1.006);}
+  }
+
+.mainNewImage{
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: 1rem;
+    animation-name: newCurrentImageDown;
+    animation-duration: .2s;
+}
+
+.mainImage{
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: 1rem;
+}

@@ -35,7 +35,7 @@ const AuctionStack: FC<IAuctionStackProps> = (props) => {
                      key={'auctionItem ' + i}
                      sx={{
                         minHeight: props.itemHeight ?? '25%',
-                        flexBasis: 100 / props.itemsPerRow - 3 + '%'
+                        flexBasis: 100 / props.itemsPerRow - 4 + '%'
                      }}
                   >
                      {item}
