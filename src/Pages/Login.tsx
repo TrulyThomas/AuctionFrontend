@@ -1,23 +1,19 @@
-import {
-   Box,
-   Button,
-   Container,
-   Stack,
-   TextField,
-   Typography
-} from '@mui/material'
+import { Box, Button, Container, Stack, TextField, Typography } from '@mui/material'
 import useAuth from '../Context/AuthenticationProvider'
 import { useLocation, useNavigate } from 'react-router-dom'
 import React, { FC, useState, useEffect } from 'react'
+import { red } from '@mui/material/colors'
 
 export const Login = () => {
    const [prevURL, setPrevURL] = useState<string>('/')
+   const [email, setEmail] = useState<string>('')
+   const [password, setPassword] = useState<string>('')
+   const [loginFailed, setLoginFailed] = useState<boolean>(false)
    const { login } = useAuth()
    const navigate = useNavigate()
    const location = useLocation()
    useEffect(() => {
-      setPrevURL(location.search.slice(1))
-      console.log(location.search.slice(1))
+      setPrevURL(location.search.slice(1) == '' ? '/' : location.search.slice(1))
    }, [])
    return (
       <Container
@@ -29,26 +25,39 @@ export const Login = () => {
          }}
       >
          <Box boxShadow={2} borderRadius={2}>
-            <Box sx={{ padding: '1rem' }}>
-               <Stack spacing={3}>
+            <Box sx={{ padding: '1.5rem' }}>
+               <Stack spacing={2}>
                   <Typography variant="h5" gutterBottom>
                      Login
+                     {loginFailed && (
+                        <Typography sx={{ marginTop: 0.1 }} variant="body2" color={red[500]}>
+                           Login failed, please try again
+                        </Typography>
+                     )}
                   </Typography>
                   <Stack direction="row" spacing={2}>
                      <TextField
                         required
+                        error={loginFailed}
                         fullWidth
                         id="text"
-                        label="Username"
+                        label="Email"
                         variant="outlined"
+                        onChange={(e) => {
+                           setEmail(e.target.value)
+                        }}
                      />
                      <TextField
                         required
+                        error={loginFailed}
                         fullWidth
                         id="outlined-password-input"
                         label="Password"
                         type="password"
                         autoComplete="current-password"
+                        onChange={(e) => {
+                           setPassword(e.target.value)
+                        }}
                      />
                   </Stack>
                   <Stack
@@ -62,8 +71,14 @@ export const Login = () => {
                      <Button
                         variant="contained"
                         onClick={() => {
-                           login('hey', '123').then(() => navigate(prevURL))
+                           login(email, password)
+                              .then(() => navigate(prevURL))
+                              .catch((e) => {
+                                 console.log(e)
+                                 setLoginFailed(true)
+                              })
                         }}
+                        disabled={!email.includes('@') || password == ''}
                      >
                         Login
                      </Button>

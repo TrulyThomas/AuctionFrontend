@@ -1,27 +1,23 @@
-import React, {
-   createContext,
-   ReactNode,
-   useContext,
-   useEffect,
-   useMemo,
-   useState
-} from 'react'
+import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import { gql, useLazyQuery } from '@apollo/client'
 
 export interface IAuthenticationContext {
    user: boolean
-   login: (username: string, password: string) => Promise<void>
+   login: (email: string, password: string) => Promise<void>
    logout: () => void
 }
 
-const AuthContext = createContext<IAuthenticationContext>(
-   {} as IAuthenticationContext
-)
+const AuthContext = createContext<IAuthenticationContext>({} as IAuthenticationContext)
 
-export const AuthenticationProvider = ({
-   children
-}: {
-   children: ReactNode
-}) => {
+export const AuthenticationProvider = ({ children }: { children: ReactNode }) => {
+   const LOGIN = gql`
+      query LoginUser($email: String!, $password: String!) {
+         login(email: $email, password: $password) {
+            username
+         }
+      }
+   `
+   const [handleLogin, { called, loading, data }] = useLazyQuery(LOGIN)
    const [user, setUser] = useState<boolean>(false)
    const [loadingInitial, setLoadingInitial] = useState<boolean>(true)
 
@@ -30,10 +26,15 @@ export const AuthenticationProvider = ({
       validateUser()
    }
 
-   const login = (username: string, password: string): Promise<void> => {
-      return new Promise((resolve, reject) => {
+   const login = (email: string, password: string): Promise<void> => {
+      return new Promise(async (resolve, reject) => {
+         const res = await handleLogin({ variables: { email, password } })
+         console.log(res)
+         if (res.data == null) {
+            return reject('Login failed')
+         }
          sessionStorage.setItem('LoginStatus', '1')
-         setUser(true)
+         setUser(res.data)
          return resolve()
       })
    }
@@ -58,11 +59,7 @@ export const AuthenticationProvider = ({
       [user]
    )
 
-   return (
-      <AuthContext.Provider value={memoedValue}>
-         {!loadingInitial && children}
-      </AuthContext.Provider>
-   )
+   return <AuthContext.Provider value={memoedValue}>{!loadingInitial && children}</AuthContext.Provider>
 }
 
 export default function useAuth() {

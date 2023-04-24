@@ -1,13 +1,5 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
-import {
-   Box,
-   Button,
-   CircularProgress,
-   Container,
-   Stack,
-   TextField,
-   Typography
-} from '@mui/material'
+import { Box, Button, CircularProgress, Container, Stack, TextField, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ImageInput, Image, Item, ItemInput } from '../Types/graphql'
@@ -52,10 +44,7 @@ function EditItem() {
       variables: { id: parseInt(id ?? '0') }
    })
 
-   const [
-      editItem,
-      { data: updateItemData, loading: loadingItemData, error: errorItemData }
-   ] = useMutation(CREAT_ITEM)
+   const [editItem, { data: updateItemData, loading: loadingItemData, error: errorItemData }] = useMutation(CREAT_ITEM)
    useEffect(() => {
       setOpdateItem(getItemData?.getItem)
    }, [getItemData])
@@ -101,11 +90,7 @@ function EditItem() {
             <Box boxShadow={2} borderRadius={2}>
                <Box sx={{ padding: '1rem' }}>
                   <Stack spacing={2}>
-                     <Typography
-                        variant="h2"
-                        gutterBottom
-                        sx={{ alignSelf: 'center' }}
-                     >
+                     <Typography variant="h2" gutterBottom sx={{ alignSelf: 'center' }}>
                         {id == 'new' ? 'New Item' : 'Edit item'}
                      </Typography>
                      <TextField
@@ -163,26 +148,15 @@ function EditItem() {
                         />
                      </Stack>
                      {!loadingImage && (
-                        <Button
-                           startIcon={<PhotoCamera />}
-                           color="primary"
-                           aria-label="upload picture"
-                           component="label"
-                        >
+                        <Button startIcon={<PhotoCamera />} color="primary" aria-label="upload picture" component="label">
                            Upload Pictures
                            <input
                               hidden
                               multiple
                               onChange={(e) => {
-                                 let temtImages = [
-                                    ...(opdateItem?.images ?? [])
-                                 ]
+                                 let temtImages = [...(opdateItem?.images ?? [])]
 
-                                 for (
-                                    var i = 0;
-                                    i < (e.target.files?.length ?? 0);
-                                    i++
-                                 ) {
+                                 for (var i = 0; i < (e.target.files?.length ?? 0); i++) {
                                     let fileReader = new FileReader()
                                     let file = e.target.files?.item(i)
                                     if (!file) continue
@@ -197,8 +171,7 @@ function EditItem() {
                                     fileReader.onload = () => {
                                        if (!fileReader.result) return
                                        temtImages.push({
-                                          base64data:
-                                             fileReader.result.toString(),
+                                          base64data: fileReader.result.toString(),
                                           order: i,
                                           id: 0,
                                           url: ''
@@ -224,11 +197,7 @@ function EditItem() {
                      {loadingImage && <CircularProgress color="inherit" />}
                      <Images
                         edit={true}
-                        images={
-                           (opdateItem?.images?.map(
-                              (i) => i?.base64data
-                           ) as string[]) ?? undefined
-                        }
+                        images={(opdateItem?.images?.map((i) => i?.base64data) as string[]) ?? undefined}
                         deleteImages={deleteImages}
                      ></Images>
                      <TextField
@@ -249,11 +218,7 @@ function EditItem() {
                         label="Description"
                         variant="outlined"
                      />
-                     <Button
-                        type="button"
-                        variant="outlined"
-                        onClick={handelSubmit}
-                     >
+                     <Button type="button" variant="outlined" onClick={handelSubmit}>
                         Edit
                      </Button>
                   </Stack>
