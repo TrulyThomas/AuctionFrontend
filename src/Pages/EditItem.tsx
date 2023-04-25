@@ -245,6 +245,7 @@ function EditItem() {
                         value={opdateItem?.text ?? ''}
                         InputLabelProps={{ shrink: true }}
                         id="text"
+                        multiline
                         label="Description"
                         variant="outlined"
                      />
