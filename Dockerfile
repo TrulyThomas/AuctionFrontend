@@ -1,17 +1,17 @@
 # ---- Base Node ----
 FROM node:18 AS base
 WORKDIR /web
-COPY package*.json .
+COPY package*.json ./
 
 # ---- Dependencies ----
 FROM base AS dependencies
 WORKDIR /web
-RUN npm ci
+RUN npm ci --silent
 
 # ---- Copy Files/Build ----
 FROM dependencies AS build
 WORKDIR /web
-COPY . .
+COPY ./ ./
 RUN npm run build
 
 # ---- NGINX ----

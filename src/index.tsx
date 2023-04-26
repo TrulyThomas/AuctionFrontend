@@ -16,7 +16,7 @@ import { AuctionThemeProvider } from './Context/ModeHook'
 import { SignUp } from './Pages/SignUp'
 
 const client = new ApolloClient({
-   uri: process.env.BACKEND_URI + '/graphql',
+   uri: '/api/graphql',
    cache: new InMemoryCache()
 })
 
