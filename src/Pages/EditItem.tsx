@@ -195,11 +195,7 @@ function EditItem() {
                         </Button>
                      )}
                      {loadingImage && <CircularProgress color="inherit" />}
-                     <Images
-                        edit={true}
-                        images={(opdateItem?.images?.map((i) => i?.base64data) as string[]) ?? undefined}
-                        deleteImages={deleteImages}
-                     ></Images>
+                     <Images edit={true} images={(opdateItem?.images?.map((i) => i?.base64data) as string[]) ?? undefined} deleteImages={deleteImages}></Images>
                      <TextField
                         fullWidth
                         onChange={(e) => {

@@ -1,8 +1,11 @@
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
-import { gql, useLazyQuery } from '@apollo/client'
+import { gql, useLazyQuery, useQuery } from '@apollo/client'
+import Cookies from 'js-cookie'
+import { Account } from '../Types/graphql'
 
 export interface IAuthenticationContext {
-   user: boolean
+   user: Account
+   setUser: React.Dispatch<React.SetStateAction<Account>>
    login: (email: string, password: string) => Promise<void>
    logout: () => void
 }
@@ -13,17 +16,26 @@ export const AuthenticationProvider = ({ children }: { children: ReactNode }) =>
    const LOGIN = gql`
       query LoginUser($email: String!, $password: String!) {
          login(email: $email, password: $password) {
-            username
+            account {
+               username
+               email
+               createdDate
+               role
+            }
+            accessToken {
+               token
+               expiresInDays
+            }
          }
       }
    `
+
    const [handleLogin, { called, loading, data }] = useLazyQuery(LOGIN)
-   const [user, setUser] = useState<boolean>(false)
-   const [loadingInitial, setLoadingInitial] = useState<boolean>(true)
+   const [user, setUser] = useState<Account>({} as Account)
 
    const logout = () => {
-      sessionStorage.setItem('LoginStatus', '0')
-      validateUser()
+      Cookies.remove('accessToken')
+      //setUser({} as Account)
    }
 
    const login = (email: string, password: string): Promise<void> => {
@@ -33,33 +45,27 @@ export const AuthenticationProvider = ({ children }: { children: ReactNode }) =>
          if (res.data == null) {
             return reject('Login failed')
          }
-         sessionStorage.setItem('LoginStatus', '1')
-         setUser(res.data)
+         Cookies.set('accessToken', res.data.login.accessToken.token, { expires: res.data.login.accessToken.expiresInDays })
+         setUser(res.data.login.account)
          return resolve()
       })
    }
 
-   const validateUser = (): void => {
-      let loginStatus = sessionStorage.getItem('LoginStatus')
-      setUser((loginStatus ?? '0') == '1')
-   }
-
    useEffect(() => {
-      console.log('this is called')
-      validateUser()
-      setLoadingInitial(false)
-   }, [])
+      console.log(user)
+   }, [user])
 
    const memoedValue = useMemo(
       () => ({
          user,
+         setUser,
          login,
          logout
       }),
       [user]
    )
 
-   return <AuthContext.Provider value={memoedValue}>{!loadingInitial && children}</AuthContext.Provider>
+   return <AuthContext.Provider value={memoedValue}>{children}</AuthContext.Provider>
 }
 
 export default function useAuth() {

@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import reportWebVitals from './reportWebVitals'
 
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client'
 import NavbarPageWrapper from './Components/NavBar/NavbarPageWrapper'
 import Landing from './Pages/Landing'
 import Items from './Pages/Items'
@@ -15,9 +15,20 @@ import AuthenticatedRoute from './Components/AuthenticatedRoute'
 import { AuctionThemeProvider } from './Context/ModeHook'
 import { SignUp } from './Pages/SignUp'
 
-const client = new ApolloClient({
+enum Roles {
+   Client = 'Client',
+   Artisan = 'Artisan',
+   Admin = 'Admin'
+}
+
+const link = createHttpLink({
    uri: 'http://localhost:4000/graphql',
-   cache: new InMemoryCache()
+   credentials: 'include'
+})
+
+const client = new ApolloClient({
+   cache: new InMemoryCache(),
+   link
 })
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
@@ -34,28 +45,24 @@ const routes = [
    {
       path: '/items',
       element: (
-         <AuthenticatedRoute>
-            <NavbarPageWrapper>
-               <Items />
-            </NavbarPageWrapper>
-         </AuthenticatedRoute>
+         <NavbarPageWrapper>
+            <Items />
+         </NavbarPageWrapper>
       )
    },
    {
-      path: '/item/:id',
+      path: '/item/:id/:name?',
       element: (
-         <AuthenticatedRoute>
-            <NavbarPageWrapper>
-               <Item />
-            </NavbarPageWrapper>
-         </AuthenticatedRoute>
+         <NavbarPageWrapper>
+            <Item />
+         </NavbarPageWrapper>
       )
    },
 
    {
       path: '/item/edit/:id',
       element: (
-         <AuthenticatedRoute>
+         <AuthenticatedRoute roles={[Roles.Admin, Roles.Artisan]}>
             <NavbarPageWrapper>
                <EditItem />
             </NavbarPageWrapper>
