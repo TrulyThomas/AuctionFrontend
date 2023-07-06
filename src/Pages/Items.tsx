@@ -1,68 +1,34 @@
-import { useParams } from 'react-router-dom'
-import React from 'react'
-import { useQuery } from '@apollo/client'
-import {
-   Card,
-   CardActionArea,
-   CardMedia,
-   CardContent,
-   Typography,
-   CardActions,
-   Button,
-   Stack,
-   Divider,
-   Box
-} from '@mui/material'
-import { graphql } from '../Types/gql'
+import { Card, CardActionArea, CardMedia, CardContent, Typography, CardActions, Button, Stack, Divider, Box } from '@mui/material'
 import AuctionStack from '../Components/AuctionStack'
-
-const GET_ITEMS = graphql(/* GraphQL */ `
-   query GetItems {
-      allItems {
-         name
-         text
-         images {
-            url
-         }
-      }
-   }
-`)
+import { trpcReact } from '../utils/trpcClient'
+const item_placeholder_image: string = require('../item_placeholder_image.svg').default
 
 function Landing() {
-   const { loading, error, data } = useQuery(GET_ITEMS)
+   const { isLoading, error, data } = trpcReact.item.getAll.useQuery()
 
-   if (loading) return <p>Loading...</p>
+   if (isLoading) return <p>Loading...</p>
    if (error) return <p>Error : {error.message}</p>
 
    return (
       <>
-         {data && data.allItems.length > 0 && (
-            <AuctionStack itemsPerRow={2}>
-               {data?.allItems.map((item) => {
+         {data && data.length > 0 && (
+            <AuctionStack itemsPerRow={3}>
+               {data?.map((item) => {
                   return (
                      <Card>
                         <CardActionArea>
                            <CardMedia
                               component="img"
-                              height="140"
-                              image={
-                                 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Orange_juice_1.jpg/1200px-Orange_juice_1.jpg'
-                              }
+                              height="220"
+                              image={item?.images?.[0]?.base64data || item_placeholder_image} //
                               alt="Auction Image"
                            />
                            <CardContent>
-                              <Typography
-                                 gutterBottom
-                                 variant="h5"
-                                 component="div"
-                              >
-                                 {'No title'}
+                              <Typography gutterBottom variant="h5" component="div">
+                                 {item.name}
                               </Typography>
-                              <Typography
-                                 variant="body2"
-                                 color="text.secondary"
-                              >
-                                 {'Click to see more'}
+                              <Typography variant="body2" color="text.secondary">
+                                 {item.text}
                               </Typography>
                            </CardContent>
                         </CardActionArea>

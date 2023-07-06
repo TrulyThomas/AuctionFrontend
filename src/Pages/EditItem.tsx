@@ -2,15 +2,19 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import { Box, Button, CircularProgress, Container, Stack, TextField, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ImageInput, Image, Item, ItemInput } from '../Types/graphql'
+import { ImageInput, Image, ItemInput } from '../Types/graphql'
 import Images from '../Components/Images'
 import { PhotoCamera } from '@mui/icons-material'
+import { trpcReact } from '../utils/trpcClient'
+import { Item } from '../Types/trpc'
 
 function EditItem() {
    const [opdateItem, setOpdateItem] = useState<Item>()
    const { id } = useParams()
    const [loadingImage, setLoadingImage] = useState<boolean>(false)
    const navigate = useNavigate()
+
+   const putItem = trpcReact.item.putItem.useMutation()
 
    const GET_ITEM_BY_ID = gql`
       query GetItemForEdit($id: Int!) {
@@ -57,7 +61,7 @@ function EditItem() {
    function handelSubmit() {
       if (opdateItem?.name == null || opdateItem?.name == '') return
 
-      const newItem: ItemInput = {
+      const newItem: Item = {
          name: opdateItem.name,
          id: opdateItem.id,
          images:
@@ -65,15 +69,15 @@ function EditItem() {
                return {
                   order: i?.order,
                   base64data: i?.base64data!,
-                  id: i?.id,
-                  url: i?.url
+                  id: i?.id
                }
             }) ?? [],
          initialPrice: opdateItem.initialPrice,
          quantity: opdateItem.quantity,
-         text: opdateItem.text
+         text: opdateItem.text,
+         isPublished: opdateItem.isPublished
       }
-      editItem({ variables: { item: newItem } })
+      putItem.mutate(newItem)
    }
 
    function deleteImages(deleteIndex: number) {
@@ -173,8 +177,7 @@ function EditItem() {
                                        temtImages.push({
                                           base64data: fileReader.result.toString(),
                                           order: i,
-                                          id: 0,
-                                          url: ''
+                                          id: 0
                                        })
                                     }
 
@@ -195,7 +198,11 @@ function EditItem() {
                         </Button>
                      )}
                      {loadingImage && <CircularProgress color="inherit" />}
-                     <Images edit={true} images={(opdateItem?.images?.map((i) => i?.base64data) as string[]) ?? undefined} deleteImages={deleteImages}></Images>
+                     <Images
+                        edit={true}
+                        images={(opdateItem?.images?.map((i) => i?.base64data) as string[]) ?? undefined}
+                        deleteImages={deleteImages}
+                     ></Images>
                      <TextField
                         fullWidth
                         onChange={(e) => {

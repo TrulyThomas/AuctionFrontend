@@ -1,8 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import reportWebVitals from './reportWebVitals'
-
-import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client'
 import NavbarPageWrapper from './Components/NavBar/NavbarPageWrapper'
 import Landing from './Pages/Landing'
 import Items from './Pages/Items'
@@ -14,22 +12,13 @@ import { Login } from './Pages/Login'
 import AuthenticatedRoute from './Components/AuthenticatedRoute'
 import { AuctionThemeProvider } from './Context/ModeHook'
 import { SignUp } from './Pages/SignUp'
+import { TrpcProvider } from './Context/TrpcProvider'
 
 enum Roles {
    Client = 'Client',
    Artisan = 'Artisan',
    Admin = 'Admin'
 }
-
-const link = createHttpLink({
-   uri: 'http://localhost:4000/graphql',
-   credentials: 'include'
-})
-
-const client = new ApolloClient({
-   cache: new InMemoryCache(),
-   link
-})
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
@@ -81,13 +70,13 @@ const routes = [
 
 root.render(
    <React.StrictMode>
-      <ApolloProvider client={client}>
+      <TrpcProvider>
          <AuthenticationProvider>
             <AuctionThemeProvider>
                <RouterProvider router={createBrowserRouter(routes)} />
             </AuctionThemeProvider>
          </AuthenticationProvider>
-      </ApolloProvider>
+      </TrpcProvider>
    </React.StrictMode>
 )
 

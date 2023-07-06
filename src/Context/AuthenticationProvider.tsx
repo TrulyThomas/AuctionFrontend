@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
-import { gql, useLazyQuery, useQuery } from '@apollo/client'
 import Cookies from 'js-cookie'
 import { Account } from '../Types/graphql'
+import { trpcReact } from '../utils/trpcClient'
 
 export interface IAuthenticationContext {
    user: Account
@@ -13,40 +13,27 @@ export interface IAuthenticationContext {
 const AuthContext = createContext<IAuthenticationContext>({} as IAuthenticationContext)
 
 export const AuthenticationProvider = ({ children }: { children: ReactNode }) => {
-   const LOGIN = gql`
-      query LoginUser($email: String!, $password: String!) {
-         login(email: $email, password: $password) {
-            account {
-               username
-               email
-               createdDate
-               role
-            }
-            accessToken {
-               token
-               expiresInDays
-            }
-         }
-      }
-   `
+   // const loginQuery = trpcReact.user.login.useQuery({ email: email, password: password }, { enabled: false })
 
-   const [handleLogin, { called, loading, data }] = useLazyQuery(LOGIN)
+   const loginQuery = trpcReact.user.login.useMutation()
+
    const [user, setUser] = useState<Account>({} as Account)
 
    const logout = () => {
       Cookies.remove('accessToken')
-      //setUser({} as Account)
+      setUser(null as any)
    }
 
-   const login = (email: string, password: string): Promise<void> => {
+   const login = (_email: string, _password: string): Promise<void> => {
       return new Promise(async (resolve, reject) => {
-         const res = await handleLogin({ variables: { email, password } })
-         console.log(res)
-         if (res.data == null) {
+         const data = await loginQuery.mutateAsync({ email: _email, password: _password })
+
+         if (data == null) {
             return reject('Login failed')
          }
-         Cookies.set('accessToken', res.data.login.accessToken.token, { expires: res.data.login.accessToken.expiresInDays })
-         setUser(res.data.login.account)
+
+         Cookies.set('accessToken', data.accessToken.token, { expires: data.accessToken.expiresInDays })
+         setUser(data.account)
          return resolve()
       })
    }

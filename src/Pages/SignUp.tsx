@@ -1,40 +1,31 @@
 import { Box, Button, Container, Stack, TextField, Typography } from '@mui/material'
 import useAuth from '../Context/AuthenticationProvider'
 import { useNavigate } from 'react-router-dom'
-import { gql, useMutation } from '@apollo/client'
 import { useEffect, useState } from 'react'
 import { red } from '@mui/material/colors'
+import { trpcReact } from '../utils/trpcClient'
 
 export function SignUp() {
    const { login } = useAuth()
    const navigate = useNavigate()
-
    const [email, setEmail] = useState<string>('')
    const [username, setUsername] = useState<string>('')
    const [password, setPassword] = useState<string>('')
-   const [signUpFailed, setSignUpFailed] = useState<boolean>(false)
 
-   const CREAT_USER = gql`
-      mutation CreateUser($username: String!, $password: String!, $email: String!) {
-         signup(email: $email, username: $username, password: $password) {
-            username
-         }
-      }
-   `
-   const [createUser, { data, loading, error }] = useMutation(CREAT_USER)
+   const signup = trpcReact.user.signup.useMutation()
+
+   const handelSignUp = () => {
+      signup.mutate({ username: username, password: password, email: email })
+   }
 
    useEffect(() => {
-      if (error) setSignUpFailed(true)
-   }, [error])
-
-   async function handelSignUp() {
-      const newUser = await createUser({ variables: { username: username, password: password, email: email } })
-
-      if (newUser.data?.signup?.username) {
+      console.log(signup)
+      console.log(username)
+      if (signup.data?.username == username) {
          login(email, password)
          navigate('/')
-      } else setSignUpFailed(true)
-   }
+      }
+   }, [signup.data])
 
    return (
       <Container
@@ -50,7 +41,7 @@ export function SignUp() {
                <Stack spacing={2.5}>
                   <Typography variant="h5" gutterBottom>
                      Sign Up
-                     {signUpFailed && (
+                     {signup.error && (
                         <Typography sx={{ marginTop: 0.1 }} variant="body2" color={red[500]}>
                            Sign up failed, please try again
                         </Typography>
@@ -60,7 +51,7 @@ export function SignUp() {
                      onChange={(e) => {
                         setEmail(e.target.value)
                      }}
-                     error={signUpFailed}
+                     error={!!signup?.error}
                      required
                      fullWidth
                      id="text"
@@ -72,7 +63,7 @@ export function SignUp() {
                         onChange={(e) => {
                            setUsername(e.target.value)
                         }}
-                        error={signUpFailed}
+                        error={!!signup?.error}
                         required
                         fullWidth
                         id="text"
@@ -84,7 +75,7 @@ export function SignUp() {
                            setPassword(e.target.value)
                         }}
                         required
-                        error={signUpFailed}
+                        error={!!signup?.error}
                         fullWidth
                         id="outlined-password-input"
                         label="Password"
